@@ -8,7 +8,7 @@ pygame.init()
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
-SCORE_MAX = 2
+SCORE_MAX = 5
 
 size = (1280, 720)
 screen = pygame.display.set_mode(size)
@@ -32,24 +32,29 @@ scoring_sound_effect = pygame.mixer.Sound('assets/258020__kodack__arcade-bleep-s
 
 # player 1
 player_1 = pygame.image.load("assets/player.png")
-player_1_y = 300
+player_1_y = 325
 player_1_move_up = False
 player_1_move_down = False
 
 # player 2 - robot
 player_2 = pygame.image.load("assets/player.png")
-player_2_y = 300
+player_2_y = 325
+player_2_dy = 5
+
+# game speed
+speed = 60
 
 # ball
 ball = pygame.image.load("assets/ball.png")
 ball_x = 640
 ball_y = 360
-ball_dx = 5
-ball_dy = 5
+ball_dx = -5
+ball_dy = -5
 
 # score
 score_1 = 0
 score_2 = 0
+
 
 # game loop
 game_loop = True
@@ -79,42 +84,170 @@ while game_loop:
         # clear screen
         screen.fill(COLOR_BLACK)
 
-        # ball collision with the wall
+        # ball collision with the lower wall
         if ball_y > 700:
             ball_dy *= -1
             bounce_sound_effect.play()
-        elif ball_y <= 0:
+        # collision with the upper wall
+        elif ball_y <= 100:
             ball_dy *= -1
             bounce_sound_effect.play()
 
         # ball collision with the player 1 's paddle
-        if ball_x < 100:
-            if player_1_y < ball_y + 25:
-                if player_1_y + 150 > ball_y:
+
+        if ball_x == 100:  # This adds angle for the collision of the ball
+
+            # If you are above the middle of the play screen this happens:
+            if player_1_y + 75 <= 325:
+
+                # If you hit the part above the middle of the paddle you change the direction
+
+                if player_1_y <= ball_y + 20 and player_1_y + 75 > ball_y:
+                    ball_dy *= -1
+                    ball_dx *= -1
+                    speed += 9
+                    bounce_sound_effect.play()
+
+                # If you hit the parte bellow the middle of the paddle you keep going up or going down
+
+                elif player_1_y + 150 >= ball_y and player_1_y + 75 <= ball_y + 20:
+                    ball_dx *= -1
+                    speed += 9
+                    bounce_sound_effect.play()
+
+            # Otherwise if you are bellow the hit of the paddle switch
+
+            elif player_1_y + 75 > 325:
+                # If you hit the part above the middle of the paddle you change the direction
+
+                if player_1_y <= ball_y + 20 and player_1_y + 75 >= ball_y:
+                    ball_dx *= -1
+                    speed += 9
+                    bounce_sound_effect.play()
+
+                # If you hit the parte bellow the middle of the paddle you change the direction
+
+                elif player_1_y + 150 >= ball_y and player_1_y + 75 < ball_y + 20:
+                    ball_dy *= -1
+                    ball_dx *= -1
+                    speed += 9
+                    bounce_sound_effect.play()
+
+        # This makes the ball don't enter the paddle
+
+        if 50 <= ball_x < 100:
+            if player_1_y <= ball_y + 20 and player_1_y >= ball_y:
+
+                ball_dy *= -1
+                ball_y = player_1_y - 21
+                ball_dx *= -1
+                speed += 9
+                bounce_sound_effect.play()
+
+            elif player_1_y + 150 > ball_y and player_1_y < ball_y + 20:
+                ball_dy *= -1
+                ball_y = player_1_y + 151
+                ball_dx *= -1
+                speed += 9
+                bounce_sound_effect.play()
+
+        # If the ball is nearest to the score line it doesn't back
+        elif ball_x < 50 or 50 <=ball_x + 20 < 75:
+            if player_1_y <= ball_y + 20 and player_1_y >= ball_y:
+
+                ball_dy *= -1
+                ball_y = player_1_y - 21
+                speed += 9
+                bounce_sound_effect.play()
+
+            elif player_1_y + 150 > ball_y and player_1_y < ball_y + 20:
+                ball_dy *= -1
+                ball_y = player_1_y + 151
+                speed += 9
+                bounce_sound_effect.play()
+
+        # ball collision with the player 2 's paddle
+
+        if ball_x + 20 == 1180:  # This adds angle for the collision of the ball
+
+            # If you are above the middle of the play screen this happens:
+            if player_2_y + 75 <= 400:
+
+                # If you hit the part above the middle of the paddle you change the direction
+
+                if player_2_y <= ball_y + 20 and player_2_y + 75 > ball_y:
+                    ball_dy *= -1
                     ball_dx *= -1
                     bounce_sound_effect.play()
 
-        # ball collision with the player 2 's paddle
-        if ball_x > 1160:
-            if player_2_y < ball_y + 25:
-                if player_2_y + 150 > ball_y:
+                # If you hit the parte bellow the middle of the paddle you keep going up or going down
+
+                elif player_2_y + 150 >= ball_y and player_2_y + 75 <= ball_y + 20:
                     ball_dx *= -1
                     bounce_sound_effect.play()
+
+            # Otherwise if you are bellow the hit of the paddle switch
+
+            elif player_2_y + 75 > 400:
+                # If you hit the part above the middle of the paddle you change the direction
+
+                if player_2_y <= ball_y + 20 and player_2_y + 75 >= ball_y:
+                    ball_dx *= -1
+                    bounce_sound_effect.play()
+
+                # If you hit the parte bellow the middle of the paddle you change the direction
+
+                elif player_2_y + 150 >= ball_y and player_2_y + 75 < ball_y + 20:
+                    ball_dy *= -1
+                    ball_dx *= -1
+                    bounce_sound_effect.play()
+
+        # This makes the ball don't enter the paddle
+        if 1180 <= ball_x < 1230:
+            if player_2_y <= ball_y + 20 and player_2_y >= ball_y:
+
+                ball_dy *= -1
+                ball_y = player_2_y - 21
+                ball_dx *= -1
+                bounce_sound_effect.play()
+
+            elif player_2_y + 150 > ball_y and player_2_y < ball_y + 20:
+                ball_dy *= -1
+                ball_y = player_2_y + 151
+                ball_dx *= -1
+                bounce_sound_effect.play()
+        elif ball_x + 20 > 1205 or 1205 <= ball_x < 1230:
+            if player_2_y <= ball_y + 20 and player_2_y >= ball_y:
+
+                ball_dy *= -1
+                ball_y = player_2_y - 21
+                bounce_sound_effect.play()
+
+            elif player_2_y + 150 > ball_y and player_2_y < ball_y + 20:
+                ball_dy *= -1
+                ball_y = player_2_y + 151
+                bounce_sound_effect.play()
 
         # scoring points
         if ball_x < -50:
             ball_x = 640
             ball_y = 360
+            ball_dx = -5
+            ball_dy = -5
             ball_dy *= -1
             ball_dx *= -1
             score_2 += 1
+            speed = 60
             scoring_sound_effect.play()
         elif ball_x > 1320:
             ball_x = 640
             ball_y = 360
+            ball_dx = 5
+            ball_dy = 5
             ball_dy *= -1
             ball_dx *= -1
             score_1 += 1
+            speed = 60
             scoring_sound_effect.play()
 
         # ball movement
@@ -134,20 +267,29 @@ while game_loop:
             player_1_y += 0
 
         # player 1 collides with upper wall
-        if player_1_y <= 0:
-            player_1_y = 0
+        if player_1_y <= 100:
+            player_1_y = 100
 
         # player 1 collides with lower wall
         elif player_1_y >= 570:
             player_1_y = 570
 
-        # player 2 "Artificial Intelligence"
-        player_2_y = ball_y
-        if player_2_y <= 0:
-            player_2_y = 0
-        elif player_2_y >= 570:
+        # player 2 collides whith upper wall
+        if player_2_y <= 100:
+          player_2_y = 100
+
+        # player 2 collides whith lower wall
+        if player_2_y >= 570:
             player_2_y = 570
 
+        # player 2 "Artificial Intelligence"
+
+        if ball_dy > 0 or ball_dy < 0 or ball_dy == 0:
+            player_2_y = player_2_y + player_2_dy
+            if player_2_y + 150 == 720:
+                player_2_dy *= -1
+            if player_2_y == 100:
+                player_2_dy *= -1
         # update score hud
         score_text = score_font.render(str(score_1) + ' x ' + str(score_2), True, COLOR_WHITE, COLOR_BLACK)
 
@@ -164,6 +306,6 @@ while game_loop:
 
     # update screen
     pygame.display.flip()
-    game_clock.tick(60)
+    game_clock.tick(speed)
 
 pygame.quit()
