@@ -1,5 +1,5 @@
-# Trabalhos
-# Nome Completo: Matheus Takashi Maruoka Vieira
+# Group Work
+# Name: Matheus Takashi Maruoka Vieira
 # Email: mtmv.snf23@uea.edu.br
-# Matrícula: 2315310018
+# Registration: 2315310018
 
