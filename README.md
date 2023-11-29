@@ -1,5 +1,5 @@
 # Group Work
 # Name: Matheus Takashi Maruoka Vieira
-Email: mtmv.snf23@uea.edu.br/n
+Email: mtmv.snf23@uea.edu.br\n
 Registration: 2315310018
 
